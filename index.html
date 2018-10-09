@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+  <head>
+  </head>
+  <body>
+    <ul id="songs"></ul>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+      var socket = io();
+      socket.on('songs', msg => {
+        $('#songs').append($('<li>').text(JSON.stringify(msg)));
+      })
+    </script>
+  </body>
+</html>

@@ -1,0 +1,27 @@
+CREATE DATABASE test;
+CREATE USER test WITH ENCRYPTED PASSWORD 'test';
+GRANT ALL PRIVILEGES ON DATABASE test TO test;
+# CREATE SCHEMA test;
+
+\c test test
+
+CREATE TABLE songs(
+    id serial,
+    name text
+);
+
+CREATE OR REPLACE FUNCTION notify() RETURNS trigger AS
+$BODY$
+BEGIN
+    PERFORM pg_notify('songs', row_to_json(NEW)::text);
+    RETURN new;
+END;
+$BODY$
+LANGUAGE 'plpgsql' VOLATILE COST 100;
+
+
+CREATE TRIGGER after_songs
+AFTER INSERT
+ON songs
+FOR EACH ROW
+EXECUTE PROCEDURE notify();
